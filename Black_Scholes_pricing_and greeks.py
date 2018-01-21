@@ -67,8 +67,9 @@ class european_option:
         
         if type(self.t).__name__ in ['int', 'float']:
             self.T = self.M - self.t
-		else:
-			self.T = (self.M - self.t).days/365.0
+        else:
+            self.T = (self.M - self.t).days/365.0
+		 
     
     def d1_d2(self):
 
