@@ -86,20 +86,27 @@ class risk_reversal:
         value_call = (self.S0 * exp(-self.div * self.T) * stats.norm.cdf(self.d1_2, 0.0, 1.0) - self.K2 * exp(-self.r * self.T) * stats.norm.cdf(self.d2_2, 0.0, 1.0))
         
         pv_risk_reversal = value_call - value_put
-        return pv_risk_reversal
+        return pv_risk_reversal, value_call , value_put
     
     def plot_payoff(self):
         
         strategy_pv = []
-        for i in range(int(0.9 * self.K1), int(1.1 * self.K2)+1):
+        for i in range(int(.8 * self.K1), int(1.1 * self.K2)+1):
             options_pv = risk_reversal(i, self.K1, self.K2, self.t, self.M, self.r, self.sigma, self.div)
-            strategy_pv.append([i,options_pv.value()])
+            self.po = max(i-self.K2,0) - max(self.K1-i,0) - self.value()[0]
+            strategy_pv.append([i,options_pv.value()[0], self.po])
         
         np.set_printoptions(precision=3, suppress=True)
         self.strategy_payoff = np.array(strategy_pv)
         print(self.strategy_payoff)
+                
+        plt.plot(self.strategy_payoff[:,0], self.strategy_payoff[:,2])
+        plt.xlabel('Underlying Prices')
+        plt.ylabel('Net Payoff')
+        plt.axhline(0, linewidth = 0.5, color = 'grey')
+        plt.show()
         
-        plt.scatter(self.strategy_payoff[:,0], self.strategy_payoff[:,1], s=5)
+        plt.scatter(self.strategy_payoff[:,0], self.strategy_payoff[:,1], s=5, c='g')
         plt.xlabel('Present Value of Underlying Prices')
         plt.ylabel('Present Value of the Risk Reversal Strategy')
         plt.axhline(0, linewidth = 0.5, color = 'grey')
